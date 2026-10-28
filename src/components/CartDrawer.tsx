@@ -131,9 +131,37 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
   const handleCopyOrder = () => {
     const message = generateWhatsAppMessage();
-    navigator.clipboard.writeText(message);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(message)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2500);
+        })
+        .catch(() => {
+          fallbackCopyText(message);
+        });
+    } else {
+      fallbackCopyText(message);
+    }
+  };
+
+  const fallbackCopyText = (text: string) => {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand('copy');
+      textArea.remove();
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (err) {
+      console.warn('Clipboard copy not supported on this device');
+    }
   };
 
   return (

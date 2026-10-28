@@ -15,9 +15,35 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, config 
   if (!isOpen) return null;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(currentUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(currentUrl)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2500);
+        })
+        .catch(() => {
+          fallbackCopy();
+        });
+    } else {
+      fallbackCopy();
+    }
+  };
+
+  const fallbackCopy = () => {
+    try {
+      const el = document.createElement('textarea');
+      el.value = currentUrl;
+      el.style.position = 'fixed';
+      el.style.left = '-999999px';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      el.remove();
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (e) {
+      console.warn('Clipboard copy unsupported');
+    }
   };
 
   const handleNativeShare = async () => {
