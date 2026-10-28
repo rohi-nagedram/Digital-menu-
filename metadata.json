@@ -1,0 +1,6 @@
+{
+  "name": "The Dark House Inn - Restaurant Menu & Ordering",
+  "description": "Premium digital menu and WhatsApp mini ordering experience for The Dark House Inn Restaurant, Hyderabad.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
